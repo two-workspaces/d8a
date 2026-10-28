@@ -1,9 +1,8 @@
 <clickhouse>
-    <!-- Blazer's login: reads the events, cannot change or drop anything. readonly=2
-         still lets it set per-query limits such as max_execution_time. -->
+    <!-- Blazer's login: may only read the d8a database. No readonly setting here: Blazer
+         sends readonly=1 with every query, which a readonly profile would refuse. -->
     <profiles>
         <blazer>
-            <readonly>2</readonly>
             <max_threads>4</max_threads>
         </blazer>
     </profiles>
@@ -13,6 +12,9 @@
             <profile>blazer</profile>
             <quota>default</quota>
             <networks><ip>::/0</ip></networks>
+            <grants>
+                <query>GRANT SELECT ON d8a.*</query>
+            </grants>
         </blazer>
     </users>
 </clickhouse>
