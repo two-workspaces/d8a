@@ -11,7 +11,7 @@
         "restartPolicyMaxRetries": 10
       },
       "source": {
-        "image": "ghcr.io/d8a-tech/d8a:v1.5.1"
+        "image": "ghcr.io/d8a-tech/d8a:1.5.1"
       },
       "variables": {
         "PORT": {
@@ -44,12 +44,12 @@
           "description": "ClickHouse native port",
           "isOptional": false
         },
-        "WAREHOUSE_CLICKHOUSE_DATABASE": {
+        "WAREHOUSE_CLICKHOUSE_DB": {
           "defaultValue": "${{ClickHouse.CLICKHOUSE_DB}}",
           "description": "ClickHouse database",
           "isOptional": false
         },
-        "WAREHOUSE_CLICKHOUSE_USERNAME": {
+        "WAREHOUSE_CLICKHOUSE_USER": {
           "defaultValue": "${{ClickHouse.CLICKHOUSE_USER}}",
           "description": "ClickHouse user",
           "isOptional": false
