@@ -4,5 +4,7 @@
   "description": "d8a: GA4-compatible analytics into ClickHouse, with Blazer dashboards",
   "category": "Analytics",
   "image": "https://raw.githubusercontent.com/d8a-tech/d8a/master/docs/static/img/d8a-logo.svg",
-  "deploy_marker": "two-workspaces/d8a"
+  "deploy_marker": "two-workspaces/d8a",
+  "id": "85965d8e-2d45-4d9a-843d-1aa779c79826",
+  "published": true
 }

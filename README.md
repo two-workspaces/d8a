@@ -45,7 +45,7 @@ What the template adds:
 
 **Telemetry.** d8a sends anonymous usage pings (version and uptime only) to d8a.tech by default; see its docs to turn them off.
 
-**Memory.** About 0.6 GB across the four services at rest: ClickHouse 0.3 GB, Blazer 0.15 GB, d8a and Postgres under 0.1 GB each.
+**Memory.** About 1.1 GB across the four services: ClickHouse 0.7 GB, Blazer and d8a 0.15 GB each, Postgres under 0.1 GB. ClickHouse grows with traffic and query load.
 
 ## Why Deploy d8a on Railway?
 
