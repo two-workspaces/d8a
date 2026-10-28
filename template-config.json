@@ -1,0 +1,330 @@
+{
+  "services": {
+    "e592f51b-a1a2-4c02-9d1e-5c4cf1096a2a": {
+      "icon": "https://raw.githubusercontent.com/d8a-tech/d8a/master/docs/static/img/d8a-logo.svg",
+      "name": "d8a",
+      "build": {},
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": "/healthz",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "ghcr.io/d8a-tech/d8a:v1.5.1"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "8080",
+          "description": "Port Railway routes to - leave as is",
+          "isOptional": false
+        },
+        "SERVER_PORT": {
+          "defaultValue": "8080",
+          "description": "Port d8a listens on - leave as is",
+          "isOptional": false
+        },
+        "PROTOCOL": {
+          "defaultValue": "ga4",
+          "description": "Tracking protocol: ga4 (gtag.js / GTM hits to /g/collect), d8a (d8a web tracker) or matomo",
+          "isOptional": false
+        },
+        "WAREHOUSE_DRIVER": {
+          "defaultValue": "clickhouse",
+          "description": "Where sessions are written - leave as is",
+          "isOptional": false
+        },
+        "WAREHOUSE_CLICKHOUSE_HOST": {
+          "defaultValue": "${{ClickHouse.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "ClickHouse host - private network only",
+          "isOptional": false
+        },
+        "WAREHOUSE_CLICKHOUSE_PORT": {
+          "defaultValue": "9000",
+          "description": "ClickHouse native port",
+          "isOptional": false
+        },
+        "WAREHOUSE_CLICKHOUSE_DATABASE": {
+          "defaultValue": "${{ClickHouse.CLICKHOUSE_DB}}",
+          "description": "ClickHouse database",
+          "isOptional": false
+        },
+        "WAREHOUSE_CLICKHOUSE_USERNAME": {
+          "defaultValue": "${{ClickHouse.CLICKHOUSE_USER}}",
+          "description": "ClickHouse user",
+          "isOptional": false
+        },
+        "WAREHOUSE_CLICKHOUSE_PASSWORD": {
+          "defaultValue": "${{ClickHouse.CLICKHOUSE_PASSWORD}}",
+          "description": "ClickHouse password",
+          "isOptional": false
+        },
+        "SESSIONS_TIMEOUT": {
+          "defaultValue": "30m",
+          "description": "Inactivity after which a session closes and is written",
+          "isOptional": false
+        },
+        "SERVER_TRUSTED_PROXIES": {
+          "defaultValue": "100.64.0.0/10",
+          "description": "Railway's proxy network: visitor IPs come from its X-Real-IP header",
+          "isOptional": false
+        },
+        "DBIP_ENABLED": {
+          "defaultValue": "true",
+          "description": "Visitor country/city from the DB-IP Lite dataset (downloaded by d8a)",
+          "isOptional": false
+        },
+        "STORAGE_SPOOL_ENABLED": {
+          "defaultValue": "true",
+          "description": "Buffer closed sessions on the volume before writing them",
+          "isOptional": false
+        },
+        "PROPERTY_SETTINGS_IP_MASKING_LEVEL": {
+          "defaultValue": "1",
+          "description": "Stored IP addresses: 0 full, 1 IPv4 /24 IPv6 /48, 2 /16 /32, 3 drop",
+          "isOptional": true
+        },
+        "RAILWAY_RUN_UID": {
+          "defaultValue": "0",
+          "description": "Runs as root so d8a can write to the Railway volume",
+          "isOptional": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "30",
+          "description": "Time to flush buffered hits on redeploy",
+          "isOptional": false
+        }
+      },
+      "networking": {
+        "serviceDomains": {
+          "<hasDomain>": {}
+        }
+      },
+      "volumeMounts": {
+        "e592f51b-a1a2-4c02-9d1e-5c4cf1096a2a": {
+          "mountPath": "/storage"
+        }
+      }
+    },
+    "615a92c4-2bf0-4020-92d3-64134fd60fc0": {
+      "icon": "https://devicons.railway.com/i/clickhouse.svg",
+      "name": "ClickHouse",
+      "build": {
+        "dockerfilePath": "Dockerfile"
+      },
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/two-workspaces/d8a",
+        "rootDirectory": "/clickhouse"
+      },
+      "variables": {
+        "CLICKHOUSE_DB": {
+          "defaultValue": "d8a",
+          "description": "Database for the events",
+          "isOptional": false
+        },
+        "CLICKHOUSE_USER": {
+          "defaultValue": "default",
+          "description": "ClickHouse admin user (d8a writes as it)",
+          "isOptional": false
+        },
+        "CLICKHOUSE_PASSWORD": {
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\") }}",
+          "description": "Auto-generated admin password",
+          "isOptional": false
+        },
+        "CLICKHOUSE_BLAZER_PASSWORD": {
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\") }}",
+          "description": "Auto-generated password of the read-only 'blazer' user",
+          "isOptional": false
+        },
+        "CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT": {
+          "defaultValue": "1",
+          "description": "Lets the admin user manage users and grants",
+          "isOptional": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "30",
+          "description": "Time for ClickHouse to shut down cleanly",
+          "isOptional": false
+        }
+      },
+      "networking": {
+        "serviceDomains": {}
+      },
+      "volumeMounts": {
+        "615a92c4-2bf0-4020-92d3-64134fd60fc0": {
+          "mountPath": "/var/lib/clickhouse"
+        }
+      }
+    },
+    "e42e9d14-5449-4eba-9547-08dc70e1e4cb": {
+      "icon": "https://raw.githubusercontent.com/ankane/blazer/master/app/assets/images/blazer/favicon.png",
+      "name": "Blazer",
+      "build": {
+        "dockerfilePath": "Dockerfile"
+      },
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": "/health",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/two-workspaces/blazer",
+        "rootDirectory": "/"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "8080",
+          "description": "Port Blazer listens on - leave as is",
+          "isOptional": false
+        },
+        "BLAZER_USERNAME": {
+          "defaultValue": "admin",
+          "description": "Sign-in name (HTTP basic auth)",
+          "isOptional": false
+        },
+        "BLAZER_PASSWORD": {
+          "defaultValue": "${{secret(20)}}",
+          "description": "Sign-in password (HTTP basic auth)",
+          "isOptional": false
+        },
+        "BLAZER_TIME_ZONE": {
+          "defaultValue": "Etc/UTC",
+          "description": "Time zone for dates in results, e.g. Europe/Berlin",
+          "isOptional": true
+        },
+        "SMTP_URL": {
+          "defaultValue": "",
+          "description": "For check emails: smtp://user:password@host:587 (outbound SMTP needs Railway Pro)",
+          "isOptional": true
+        },
+        "BLAZER_FROM_EMAIL": {
+          "defaultValue": "",
+          "description": "Sender address for check emails",
+          "isOptional": true
+        },
+        "BLAZER_SLACK_WEBHOOK_URL": {
+          "defaultValue": "",
+          "description": "Slack incoming webhook for check alerts",
+          "isOptional": true
+        },
+        "DATABASE_URL": {
+          "defaultValue": "${{Postgres.DATABASE_URL}}",
+          "description": "Blazer's own database (queries, dashboards, checks) - leave as is",
+          "isOptional": false
+        },
+        "SECRET_KEY_BASE": {
+          "defaultValue": "${{secret(64)}}",
+          "description": "Rails secret - leave as is",
+          "isOptional": false
+        },
+        "BLAZER_DATABASE_URL_D8A": {
+          "defaultValue": "clickhouse://blazer:${{ClickHouse.CLICKHOUSE_BLAZER_PASSWORD}}@${{ClickHouse.RAILWAY_PRIVATE_DOMAIN}}:8123/${{ClickHouse.CLICKHOUSE_DB}}",
+          "description": "d8a's events in ClickHouse, read-only - leave as is",
+          "isOptional": false
+        },
+        "BLAZER_SEED": {
+          "defaultValue": "d8a",
+          "description": "Adds the Website analytics dashboard on first boot",
+          "isOptional": false
+        },
+        "BLAZER_TIMEOUT": {
+          "defaultValue": "60",
+          "description": "Query time limit in seconds",
+          "isOptional": true
+        }
+      },
+      "networking": {
+        "serviceDomains": {
+          "<hasDomain>": {}
+        }
+      }
+    },
+    "055e2128-6912-4407-916a-e90e9e7c9d46": {
+      "icon": "https://devicons.railway.com/i/postgresql.svg",
+      "name": "Postgres",
+      "build": {},
+      "deploy": {
+        "requiredMountPath": "/var/lib/postgresql/data"
+      },
+      "source": {
+        "image": "ghcr.io/railwayapp-templates/postgres-ssl:17"
+      },
+      "variables": {
+        "PGDATA": {
+          "defaultValue": "/var/lib/postgresql/data/pgdata",
+          "description": "Location where the database will be initialized",
+          "isOptional": false
+        },
+        "PGHOST": {
+          "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Railway Private Domain Name.",
+          "isOptional": false
+        },
+        "PGPORT": {
+          "defaultValue": "5432",
+          "description": "Port to connect to Postgres.",
+          "isOptional": false
+        },
+        "PGUSER": {
+          "defaultValue": "${{ POSTGRES_USER }}",
+          "description": "Required variable for Data panel",
+          "isOptional": false
+        },
+        "PGDATABASE": {
+          "defaultValue": "${{POSTGRES_DB}}",
+          "description": "Required variable for the data panel.",
+          "isOptional": false
+        },
+        "PGPASSWORD": {
+          "defaultValue": "${{POSTGRES_PASSWORD}}",
+          "description": "Required variable for Data panel",
+          "isOptional": false
+        },
+        "POSTGRES_DB": {
+          "defaultValue": "blazer",
+          "description": "Default database created when image is started.",
+          "isOptional": false
+        },
+        "DATABASE_URL": {
+          "defaultValue": "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}",
+          "description": "URL to connect to Postgres database.",
+          "isOptional": false
+        },
+        "POSTGRES_USER": {
+          "defaultValue": "postgres",
+          "description": "User to connect to Postgres DB",
+          "isOptional": false
+        },
+        "SSL_CERT_DAYS": {
+          "defaultValue": "820",
+          "description": "SSL certificate expiry in days.",
+          "isOptional": true
+        },
+        "POSTGRES_PASSWORD": {
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\") }}",
+          "description": "Password to connect to DB",
+          "isOptional": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "60",
+          "description": "Allow Postgres to cleanly shut down",
+          "isOptional": false
+        }
+      },
+      "networking": {},
+      "volumeMounts": {
+        "055e2128-6912-4407-916a-e90e9e7c9d46": {
+          "mountPath": "/var/lib/postgresql/data"
+        }
+      }
+    }
+  }
+}

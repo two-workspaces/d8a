@@ -1,0 +1,30 @@
+<clickhouse>
+    <listen_host>::</listen_host>
+    <logger>
+        <level>warning</level>
+        <console>true</console>
+    </logger>
+    <!-- System log tables nothing here reads; on a small volume they only grow. -->
+    <query_thread_log remove="remove"/>
+    <query_log remove="remove"/>
+    <query_views_log remove="remove"/>
+    <query_metric_log remove="remove"/>
+    <error_log remove="remove"/>
+    <opentelemetry_span_log remove="remove"/>
+    <text_log remove="remove"/>
+    <trace_log remove="remove"/>
+    <metric_log remove="remove"/>
+    <asynchronous_metric_log remove="remove"/>
+    <session_log remove="remove"/>
+    <part_log remove="remove"/>
+    <latency_log remove="remove"/>
+    <processors_profile_log remove="remove"/>
+    <max_server_memory_usage_to_ram_ratio>0.80</max_server_memory_usage_to_ram_ratio>
+    <merges_mutations_memory_usage_to_ram_ratio>0.25</merges_mutations_memory_usage_to_ram_ratio>
+    <!-- Railway shows the host's 48 cores; query threads and caches sized from them
+         would hold memory a small plan does not have. (background_pool_size stays at
+         its default 16: the merge settings refuse to start below 10.) -->
+    <concurrent_threads_soft_limit_num>4</concurrent_threads_soft_limit_num>
+    <background_schedule_pool_size>16</background_schedule_pool_size>
+    <mark_cache_size>268435456</mark_cache_size>
+</clickhouse>

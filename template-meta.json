@@ -1,0 +1,8 @@
+{
+  "name": "d8a | Warehouse-Native GA4 Analytics on ClickHouse",
+  "short_name": "d8a",
+  "description": "d8a: GA4-compatible analytics into ClickHouse, with Blazer dashboards",
+  "category": "Analytics",
+  "image": "https://raw.githubusercontent.com/d8a-tech/d8a/master/docs/static/img/d8a-logo.svg",
+  "deploy_marker": "two-workspaces/d8a"
+}
